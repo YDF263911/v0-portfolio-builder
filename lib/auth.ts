@@ -24,12 +24,7 @@ export const authService = {
     });
     if (error) throw error;
     
-    // 登录成功后启用会话持久化
-    if (data.session) {
-      // 重新创建Supabase客户端以启用持久化
-      const { enableSessionPersistence } = await import('./supabase');
-      enableSessionPersistence();
-    }
+    // 会话持久化已在初始化时启用，无需额外操作
     
     return data;
   },
@@ -51,11 +46,10 @@ export const authService = {
     return supabase.auth.onAuthStateChange(callback);
   },
 
-  // 启用会话持久化
+  // 启用会话持久化（已废弃，会话持久化已在初始化时启用）
   enablePersistence: async () => {
-    // 重新创建Supabase客户端以启用持久化
-    const { enableSessionPersistence } = await import('./supabase');
-    enableSessionPersistence();
+    // 会话持久化已在初始化时启用，无需额外操作
+    console.log('会话持久化已在初始化时启用');
   },
 
   // 获取会话信息
