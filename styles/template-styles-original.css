@@ -1,0 +1,67 @@
+/* 基础模板样式 - 简洁版本 */
+
+/* 基础布局样式 */
+.template-layout {
+  min-height: 100vh;
+  font-family: var(--template-font-family);
+  background: var(--template-background);
+  color: var(--template-text);
+  line-height: 1.6;
+}
+
+/* 卡片基础样式 */
+.template-card {
+  background: var(--template-surface);
+  border-radius: var(--template-border-radius);
+  border: 1px solid var(--template-border);
+  transition: all 0.3s ease;
+}
+
+/* 基础悬停效果 */
+.template-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 按钮基础样式 */
+.template-button {
+  background: var(--template-primary);
+  color: white;
+  border: none;
+  border-radius: var(--template-border-radius);
+  padding: 10px 20px;
+  font-weight: var(--template-font-weight);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.template-button:hover {
+  background: var(--template-secondary);
+}
+
+/* 导航基础样式 */
+.template-nav {
+  background: var(--template-surface);
+  border-bottom: 1px solid var(--template-border);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .template-layout {
+    padding: 10px;
+  }
+  
+  .template-card {
+    margin-bottom: 15px;
+  }
+}
+
+/* 基础动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.template-section[data-animation="fade"] {
+  animation: fadeIn 0.5s ease-out;
+}

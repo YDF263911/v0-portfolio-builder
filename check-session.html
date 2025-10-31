@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>检查会话状态</title>
+</head>
+<body>
+    <h1>Supabase会话状态检查</h1>
+    <div id="status">正在检查...</div>
+    
+    <script>
+        // 检查localStorage中的Supabase会话数据
+        const supabaseKeys = Object.keys(localStorage).filter(key => 
+            key.includes('supabase') || key.includes('auth')
+        );
+        
+        const statusDiv = document.getElementById('status');
+        
+        if (supabaseKeys.length > 0) {
+            statusDiv.innerHTML = '<h2>找到的会话数据:</h2>';
+            supabaseKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                statusDiv.innerHTML += `<p><strong>${key}:</strong> ${value ? '有数据' : '空'}</p>`;
+                
+                if (value) {
+                    try {
+                        const parsed = JSON.parse(value);
+                        statusDiv.innerHTML += `<pre>${JSON.stringify(parsed, null, 2)}</pre>`;
+                    } catch (e) {
+                        statusDiv.innerHTML += `<p>无法解析JSON</p>`;
+                    }
+                }
+            });
+        } else {
+            statusDiv.innerHTML = '<h2>未找到Supabase会话数据</h2>';
+        }
+        
+        // 检查是否有Supabase客户端实例
+        if (window.supabase) {
+            statusDiv.innerHTML += '<h2>Supabase客户端已加载</h2>';
+        } else {
+            statusDiv.innerHTML += '<h2>Supabase客户端未加载</h2>';
+        }
+    </script>
+</body>
+</html>

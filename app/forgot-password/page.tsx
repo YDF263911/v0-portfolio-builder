@@ -10,23 +10,29 @@ import { Label } from "@/components/ui/label"
 import { authService } from "@/lib/auth"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
+    setSuccess("")
 
     try {
-      await authService.signIn(email, password)
-      router.push("/")
+      await authService.resetPassword(email)
+      setSuccess("密码重置链接已发送到您的邮箱，请检查您的收件箱。")
+      
+      // 3秒后跳转到登录页面
+      setTimeout(() => {
+        router.push("/login")
+      }, 3000)
     } catch (error: any) {
-      setError(error.message || "登录失败，请检查邮箱和密码")
+      setError(error.message || "发送重置邮件失败，请重试")
     } finally {
       setIsLoading(false)
     }
@@ -36,13 +42,18 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center p-6 bg-background">
       <Card className="max-w-md w-full">
         <CardHeader>
-          <CardTitle className="text-2xl">欢迎回来</CardTitle>
-          <CardDescription>登录您的 PortfolioBuilder 账户</CardDescription>
+          <CardTitle className="text-2xl">重置密码</CardTitle>
+          <CardDescription>输入您的邮箱地址，我们将发送重置链接</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          {success && (
+            <Alert>
+              <AlertDescription>{success}</AlertDescription>
             </Alert>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,31 +68,15 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">密码</Label>
-              <Input 
-                id="password" 
-                type="password" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "登录中..." : "登录"}
+              {isLoading ? "发送中..." : "发送重置链接"}
             </Button>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
           <p className="text-sm text-muted-foreground text-center">
-            {"还没有账户？ "}
-            <Link href="/register" className="text-primary hover:underline">
-              立即注册
-            </Link>
-          </p>
-          <p className="text-xs text-muted-foreground text-center">
-            <Link href="/forgot-password" className="text-primary hover:underline">
-              忘记密码？
+            <Link href="/login" className="text-primary hover:underline">
+              返回登录
             </Link>
           </p>
         </CardFooter>

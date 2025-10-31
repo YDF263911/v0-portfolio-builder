@@ -14,19 +14,19 @@ export function ThemeSettingsForm({ theme, onChange }: ThemeSettingsFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Theme Settings</CardTitle>
+        <CardTitle>主题设置</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label>Color Scheme</Label>
+          <Label>配色方案</Label>
           <Select value={theme.colorScheme} onValueChange={(value) => onChange({ colorScheme: value as any })}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="blue">Blue</SelectItem>
-              <SelectItem value="purple">Purple</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="blue">蓝色</SelectItem>
+              <SelectItem value="purple">紫色</SelectItem>
+              <SelectItem value="dark">暗色</SelectItem>
             </SelectContent>
           </Select>
         </div>
