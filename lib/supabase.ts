@@ -4,14 +4,14 @@ import { createClient } from '@supabase/supabase-js'
 let supabaseInstance: ReturnType<typeof createClient> | null = null
 
 function createSupabaseClient() {
+  // 如果已经存在实例，直接返回
+  if (supabaseInstance) {
+    return supabaseInstance
+  }
+  
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mxummcxogzsptqxsgrlm.supabase.co'
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dW1tY3hvZ3pzcHRxeHNncmxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyNTExNzUsImV4cCI6MjA3NjgyNzE3NX0.ImtnGwdbqn0VewURz1b0hrdigbQyZw3gb9lcboZIKI0'
   
-  // 检查是否有现有的会话，如果有则启用持久化，否则禁用
-  const hasExistingSession = typeof window !== 'undefined' && 
-    (localStorage.getItem('supabase.auth.token') || sessionStorage.getItem('supabase.auth.token'));
-  
-  // 每次都重新创建客户端以确保会话设置正确
   supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true, // 始终启用会话持久化
@@ -29,23 +29,6 @@ function createSupabaseClient() {
 }
 
 export const supabase = createSupabaseClient()
-
-// 登录成功后启用会话持久化的函数
-export const enableSessionPersistence = () => {
-  if (supabaseInstance) {
-    // 重新创建客户端以启用持久化
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://mxummcxogzsptqxsgrlm.supabase.co'
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14dW1tY3hvZ3pzcHRxeHNncmxtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyNTExNzUsImV4cCI6MjA3NjgyNzE3NX0.ImtnGwdbqn0VewURz1b0hrdigbQyZw3gb9lcboZIKI0'
-    
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true, // 启用会话持久化
-        autoRefreshToken: true,
-        detectSessionInUrl: true
-      }
-    })
-  }
-}
 
 // 作品集数据表操作
 export const portfolioService = {
@@ -98,21 +81,6 @@ export const portfolioService = {
     try {
       console.log('正在获取用户作品集，用户ID:', userId)
       
-      // 首先检查表是否存在
-      const { data: tableCheck, error: tableError } = await supabase
-        .from('portfolios')
-        .select('id')
-        .limit(1)
-
-      if (tableError) {
-        console.error('检查表是否存在时出错:', tableError)
-        console.log('提示: portfolios表可能不存在，需要先执行数据库迁移')
-        // 如果表不存在，返回空数组而不是抛出错误
-        return []
-      }
-      
-      console.log('表检查通过，开始查询用户数据')
-      
       const { data, error } = await supabase
         .from('portfolios')
         .select('*')
@@ -126,11 +94,6 @@ export const portfolioService = {
           hint: error.hint,
           code: error.code
         })
-        // 如果是表不存在错误，返回空数组
-        if (error.code === '42P01') { // 表不存在错误代码
-          console.log('portfolios表不存在，请先执行数据库迁移')
-          return []
-        }
         throw error
       }
       
